@@ -1,0 +1,16 @@
+# UME Server Configuration
+# This file is for documentation/reference only.
+# Actual credentials are loaded from the .env file (UME_SERVERS JSON).
+#
+# ume_servers:
+#   - id: ume1
+#     host: 192.168.1.10
+#     port: 8443
+#     username: admin
+#     password: change_me
+#
+#   - id: ume2
+#     host: 192.168.1.20
+#     port: 8443
+#     username: admin
+#     password: change_me

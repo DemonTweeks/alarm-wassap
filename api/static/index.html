@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARIZA</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<header>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+  </svg>
+  <div>
+    <h1>ARIZA</h1>
+    <div class="subtitle">Autonomous Realtime Intelligence ZTE Agent</div>
+  </div>
+  <div id="ws-indicator">
+    <div id="ws-dot"></div>
+    <span id="ws-label">Disconnected</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- Left Sidebar -->
+  <div class="sidebar">
+
+    <div class="panel">
+      <div class="panel-header">
+        UME Servers
+        <button class="btn btn-sm btn-ghost" id="btn-health-refresh" onclick="loadHealth()">Refresh</button>
+      </div>
+      <div class="panel-body" id="ume-cards">
+        <div class="empty-state"><div class="icon">⏳</div>Loading...</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">Query Alarm</div>
+      <div class="panel-body">
+        <form class="query-form" onsubmit="submitQuery(event)">
+          <input id="site-input" type="text" maxlength="4" placeholder="e.g. STLK" autocomplete="off" />
+          <button type="submit" id="btn-query">Query</button>
+        </form>
+        <div id="query-status" style="color:var(--muted);font-size:12px;"></div>
+      </div>
+    </div>
+
+    <div class="panel" style="flex:1;">
+      <div class="panel-header">
+        Topology Cache
+        <button class="btn btn-sm btn-ghost" onclick="refreshTopology()">Refresh</button>
+      </div>
+      <div class="panel-body" style="padding:0;overflow-y:auto;max-height:320px;">
+        <div id="topo-refresh-time" style="padding:8px 16px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border);"></div>
+        <table class="topo-table" id="topo-table">
+          <thead><tr><th>Site</th><th>NEs</th><th>UME</th></tr></thead>
+          <tbody id="topo-body">
+            <tr><td colspan="3" style="padding:24px;text-align:center;color:var(--muted);">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-area">
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('tab-results', this)">Alarm Results</div>
+      <div class="tab" onclick="showTab('tab-history', this)">Query History <span id="history-count" style="background:var(--border);border-radius:10px;padding:0 6px;font-size:11px;"></span></div>
+      <div class="tab" onclick="showTab('tab-conversations', this); loadConversations()">Conversations <span id="conv-count" style="background:var(--border);border-radius:10px;padding:0 6px;font-size:11px;"></span></div>
+    </div>
+
+    <div id="tab-results" class="tab-content active">
+      <div id="alarm-filter-bar" style="display:none;">
+        <div class="filter-group">
+          <label class="filter-label">Visible</label>
+          <select id="filter-visible" class="filter-select" onchange="onFilterChange()">
+            <option value="all">All</option>
+            <option value="1">Visible (1)</option>
+            <option value="0">Hidden (0)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Maintain Status</label>
+          <select id="filter-maintain" class="filter-select" onchange="onFilterChange()">
+            <option value="all">All</option>
+            <option value="0">Normal (0)</option>
+            <option value="1">In Maintenance (1)</option>
+            <option value="2">Maintenance Done (2)</option>
+          </select>
+        </div>
+        <div id="filter-count" class="filter-count"></div>
+      </div>
+      <div id="alarm-results">
+        <div class="empty-state">
+          <div class="icon">🔔</div>
+          <div>Enter a site code and click Query</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-history" class="tab-content">
+      <div id="history-list">
+        <div class="empty-state">
+          <div class="icon">📋</div>
+          <div>No queries yet — query history will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-conversations" class="tab-content">
+      <div class="conv-layout">
+        <div class="conv-sidebar">
+          <div class="conv-sidebar-header">
+            Contacts
+            <button class="btn btn-sm btn-ghost" onclick="loadConversations()">Refresh</button>
+          </div>
+          <div id="conv-sessions">
+            <div class="empty-state" style="padding:24px"><div class="icon">💬</div><div>No conversations yet</div></div>
+          </div>
+        </div>
+        <div class="conv-main">
+          <div class="conv-main-header" id="conv-header">Select a contact</div>
+          <div class="conv-messages" id="conv-messages">
+            <div class="empty-state"><div class="icon">💬</div><div>Select a contact to view messages</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
